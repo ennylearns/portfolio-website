@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubscriberForm from '../components/SubscriberForm.astro';
+import { siteConfig } from '../config/site';
+
+const pageTitle = `About — ${siteConfig.authorName}`;
+const pageDescription =
+  'Eniola Odunaiya is an AI builder-writer in Nigeria focused on practical AI for daily life, small businesses, and economic growth across Nigeria and Africa.';
+
+const channels = [
+  { label: 'X / Twitter', href: siteConfig.social.x, external: true },
+  { label: 'LinkedIn', href: siteConfig.social.linkedin, external: true },
+  { label: 'GitHub', href: siteConfig.social.github, external: true },
+  {
+    label: `Email (${siteConfig.social.email})`,
+    href: `mailto:${siteConfig.social.email}`,
+    external: false,
+  },
+];
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <section aria-labelledby="about-heading">
+    <p class="eyebrow">About · Builder &amp; Writer</p>
+    <h1 id="about-heading">About {siteConfig.authorName}</h1>
+    <p class="lead">
+      I am an AI builder-writer in Nigeria working on a practical question: how
+      can software and modern AI meaningfully improve daily life, strengthen
+      small businesses, and grow the economy across Nigeria and Africa?
+    </p>
+  </section>
+
+  <section aria-labelledby="story-heading">
+    <h2 id="story-heading">Why I build and write here</h2>
+    <p>
+      Too much conversation around AI stays stuck in abstract hype or demos built
+      for contexts far removed from Lagos, Abuja, Nairobi, or Accra. Operators,
+      founders, and decision-makers across the continent do not need another
+      hype cycle—they need dependable workflows that work on real constraints,
+      real budgets, and real mobile connections.
+    </p>
+    <p>
+      This site is my workshop and teaching desk. All <strong>Work</strong>
+      here falls into one of three formats: working <strong>Prototypes</strong>
+      that solve concrete problems, step-by-step <strong>Playbooks</strong>
+      grounded in Nigerian and African realities, and long-form
+      <strong>Essays</strong> on what AI shifts in our local and regional
+      economies.
+    </p>
+  </section>
+
+  <hr class="section-rule" />
+
+  <section aria-labelledby="mission-heading">
+    <h2 id="mission-heading">Practical AI for Nigeria &amp; Africa</h2>
+    <p>
+      Across Nigeria and the wider African continent, small businesses and
+      independent operators carry the weight of everyday commerce. When AI is
+      applied with restraint and craft—removing friction, sharpening communication,
+      and automating repetitive back-office tasks—it compounds real productivity.
+    </p>
+    <p>
+      My focus spans three <strong>Themes</strong>: <strong>Daily Life</strong>,
+      <strong>Business</strong>, and <strong>Economy</strong>. Whenever a tool or
+      guide earns its keep in practice, I document it openly so any
+      <strong>Reader</strong> can inspect it, adapt it, and put it to work.
+    </p>
+  </section>
+
+  <hr class="section-rule" />
+
+  <section aria-labelledby="connect-heading">
+    <h2 id="connect-heading">Elsewhere &amp; direct contact</h2>
+    <p>
+      You can follow new <strong>Work</strong> as it ships, inspect source
+      repositories, or reach me directly:
+    </p>
+    <ul class="contact-list">
+      {
+        channels.map((channel) => (
+          <li>
+            <a
+              href={channel.href}
+              target={channel.external ? '_blank' : undefined}
+              rel={channel.external ? 'noopener noreferrer' : undefined}
+            >
+              {channel.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <hr class="section-rule" />
+
+  <SubscriberForm idSuffix="about-subscriber" />
+</BaseLayout>

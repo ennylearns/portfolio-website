@@ -1,0 +1,44 @@
+---
+import { siteConfig } from '../config/site';
+
+interface Props {
+  actionUrl?: string;
+  heading?: string;
+  idSuffix?: string;
+}
+
+const {
+  actionUrl = siteConfig.buttondown.actionUrl,
+  heading = 'Get notified when new Work ships',
+  idSuffix = 'subscriber',
+} = Astro.props;
+
+const headingId = `${idSuffix}-heading`;
+const emailInputId = `${idSuffix}-email`;
+---
+
+<section class="subscriber-box" aria-labelledby={headingId}>
+  <h2 id={headingId}>{heading}</h2>
+  <p class="subscriber-copy">
+    No fixed schedule. Become a <strong>Subscriber</strong> to receive an email
+    only when new <strong>Work</strong> ships—new <strong>Prototypes</strong>,
+    <strong>Playbooks</strong>, and <strong>Essays</strong>.
+  </p>
+
+  <form class="subscriber-form" action={actionUrl} method="post">
+    <div class="subscriber-field">
+      <label for={emailInputId}>Email address</label>
+      <div class="subscriber-controls">
+        <input
+          id={emailInputId}
+          type="email"
+          name="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+          required
+        />
+        <button type="submit">Subscribe</button>
+      </div>
+    </div>
+  </form>
+</section>

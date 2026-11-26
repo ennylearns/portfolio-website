@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SubscriberForm from '../components/SubscriberForm.astro';
 import { siteConfig } from '../config/site';
 ---
 
@@ -29,4 +30,8 @@ import { siteConfig } from '../config/site';
       <a href="/about">Read more about my work and story</a>
     </p>
   </section>
+
+  <hr class="section-rule" />
+
+  <SubscriberForm idSuffix="home-subscriber" />
 </BaseLayout>
