@@ -17,7 +17,7 @@ That generic look quietly damages credibility. Small-business operators, enterpr
 
 ## Before / After
 
-Here is the contrast the skill enforces: moving from default AI-generated visual clutter to calm, legible editorial craft that respects the **Reader**'s time and mobile bandwidth.
+Here is the contrast the skill enforces: moving from default AI-generated visual clutter to calm, legible editorial craft that respects the Reader's time and mobile bandwidth.
 
 <figure class="prototype-figure">
   <img src="/images/slop-remover-before.svg" alt="Before: dark purple neon interface with glowing pills, generic buzzwords, and symmetrical filler cards" width="640" height="380" />
@@ -31,12 +31,12 @@ Here is the contrast the skill enforces: moving from default AI-generated visual
 
 ## How it works
 
-The **AI Design Slop-Remover** runs as a structured review skill inside your coding assistant. Before accepting a generated page or component, it checks four concrete areas:
+The AI Design Slop-Remover runs as a structured review skill inside your coding assistant. Before accepting a generated page or component, it checks four concrete areas:
 
-1. **Copy clarity:** Flags vague AI buzzwords ("seamless", "unlock", "10x", "revolutionize") and replaces them with plain-English statements of who the tool serves and what problem it solves.
-2. **Visual restraint:** Strips unrequested purple/neon gradients, decorative blur blobs, glowing borders, and redundant icon badges, replacing them with consistent spacing, crisp contrast, and one intentional accent color.
-3. **Hierarchy and whitespace:** Consolidates repetitive card grids into clear editorial sections where headings, body copy, and primary actions follow a single readable measure.
-4. **Payload discipline:** Removes unnecessary client-side JavaScript, heavy animation libraries, and external font round-trips so pages render rapidly on metered 3G and 4G mobile connections.
+1. Copy clarity: Flags vague AI buzzwords ("seamless", "unlock", "10x", "revolutionize") and replaces them with plain-English statements of who the tool serves and what problem it solves.
+2. Visual restraint: Strips unrequested purple/neon gradients, decorative blur blobs, glowing borders, and redundant icon badges, replacing them with consistent spacing, crisp contrast, and one intentional accent color.
+3. Hierarchy and whitespace: Consolidates repetitive card grids into clear editorial sections where headings, body copy, and primary actions follow a single readable measure.
+4. Payload discipline: Removes unnecessary client-side JavaScript, heavy animation libraries, and external font round-trips so pages render rapidly on metered 3G and 4G mobile connections.
 
 ## Try / Inspect it
 

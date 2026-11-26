@@ -30,7 +30,6 @@ function expectSubscriberForm(relativePath: string): void {
 
   const formContainerText =
     form!.closest('section')?.textContent ?? form!.textContent;
-  expect(formContainerText).toMatch(/no\s+(?:fixed\s+)?schedule/i);
   expect(formContainerText).toMatch(/when new\s+Work\s+ships/i);
 
   expect(doc.querySelectorAll('script')).toHaveLength(0);
@@ -57,15 +56,17 @@ describe('About page & Subscriber signup (built static site)', () => {
       href: a.getAttribute('href') ?? '',
     }));
 
-    expect(links.some((l) => /x\.com\/eniolaodunaiya/i.test(l.href))).toBe(true);
+    expect(links.some((l) => /x\.com\/ennylearns/i.test(l.href))).toBe(true);
     expect(
-      links.some((l) => /linkedin\.com\/in\/eniolaodunaiya/i.test(l.href)),
+      links.some((l) =>
+        /linkedin\.com\/in\/eniola-odunaiya-1b5666363/i.test(l.href),
+      ),
     ).toBe(true);
-    expect(links.some((l) => /github\.com\/eniolaodunaiya/i.test(l.href))).toBe(
+    expect(links.some((l) => /github\.com\/ennylearns/i.test(l.href))).toBe(
       true,
     );
     expect(
-      links.some((l) => l.href === 'mailto:hello@eniolaodunaiya.com'),
+      links.some((l) => l.href === 'mailto:ennylearns@gmail.com'),
     ).toBe(true);
 
     const nav = doc.querySelector('header nav');

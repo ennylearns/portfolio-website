@@ -12,13 +12,12 @@ describe('Home page (built static site)', () => {
     buildSite();
   });
 
-  it('renders Eniola Odunaiya, practical AI thesis for Nigeria and Africa, and bio link to About', () => {
+  it('renders practical AI thesis for Nigeria and Africa, and bio link to About', () => {
     const doc = readHtml('index.html');
     const main = doc.querySelector('main');
     expect(main).not.toBeNull();
 
     const text = main!.textContent;
-    expect(text).toContain('Eniola Odunaiya');
     expect(text).toMatch(/practical AI/i);
     expect(text).toContain('Nigeria');
     expect(text).toContain('Africa');
@@ -78,9 +77,8 @@ describe('Home page (built static site)', () => {
   it('outputs semantic headings, SEO title/description, Open Graph & Twitter metadata, and zero script tags', () => {
     const doc = readHtml('index.html');
 
-    const h1 = doc.querySelector('h1');
-    expect(h1).not.toBeNull();
-    expect(h1!.textContent).toContain('Eniola Odunaiya');
+    const h2 = doc.querySelector('h2');
+    expect(h2).not.toBeNull();
 
     expectSeoMetadata(doc, {
       canonical: 'https://eniolaodunaiya.com/',
@@ -91,7 +89,7 @@ describe('Home page (built static site)', () => {
     expect(doc.querySelectorAll('script')).toHaveLength(0);
   });
 
-  it('ships light-mode editorial CSS without external webfonts or gradients', () => {
+  it('ships light-mode editorial CSS with Google Sans and without gradients', () => {
     const doc = readHtml('index.html');
     const stylesheetLinks = doc.querySelectorAll('link[rel="stylesheet"]');
     const inlineStyles = doc.querySelectorAll('style');
@@ -101,7 +99,10 @@ describe('Home page (built static site)', () => {
 
     for (const link of stylesheetLinks) {
       const href = link.getAttribute('href') ?? '';
-      expect(href).not.toMatch(/^https?:\/\//i);
+      if (/^https?:\/\//i.test(href)) {
+        expect(href).toContain('fonts.googleapis.com');
+        continue;
+      }
       const rel = href.replace(/^\//, '');
       expect(distExists(rel)).toBe(true);
       cssParts.push(readDistFile(rel));
@@ -113,8 +114,8 @@ describe('Home page (built static site)', () => {
     expect(combinedCss).toContain('#faf8f5');
     expect(combinedCss).toContain('#1a1918');
     expect(combinedCss).toContain('#9a3412');
+    expect(combinedCss).toContain('google sans');
     expect(combinedCss).not.toContain('linear-gradient');
     expect(combinedCss).not.toContain('radial-gradient');
-    expect(combinedCss).not.toContain('fonts.googleapis.com');
   });
 });

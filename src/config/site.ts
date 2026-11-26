@@ -8,10 +8,10 @@ export const siteConfig = {
   description:
     'Practical AI for daily life, small businesses, and the economy in Nigeria and across Africa. Prototypes, Playbooks, and Essays by Eniola Odunaiya.',
   social: {
-    x: 'https://x.com/eniolaodunaiya',
-    linkedin: 'https://www.linkedin.com/in/eniolaodunaiya',
-    github: 'https://github.com/eniolaodunaiya',
-    email: 'hello@eniolaodunaiya.com',
+    x: 'https://x.com/ennylearns',
+    linkedin: 'https://www.linkedin.com/in/eniola-odunaiya-1b5666363/',
+    github: 'https://github.com/ennylearns',
+    email: 'ennylearns@gmail.com',
   },
   buttondown: {
     username: buttondownUsername,

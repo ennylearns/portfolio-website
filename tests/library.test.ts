@@ -254,7 +254,7 @@ Draft only.
       expect(form!.querySelector('input[type="email"]')).not.toBeNull();
       const formSectionText =
         form!.closest('section')?.textContent ?? form!.textContent;
-      expect(formSectionText).toMatch(/no\s+(?:fixed\s+)?schedule/i);
+      expect(formSectionText).toMatch(/when new\s+Work\s+ships/i);
 
       expect(doc.querySelectorAll('script')).toHaveLength(0);
     }

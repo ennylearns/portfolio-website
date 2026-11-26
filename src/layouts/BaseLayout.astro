@@ -27,6 +27,12 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? siteConfig.siteUr
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400..700;1,400..700&display=swap"
+      rel="stylesheet"
+    />
 
     <meta property="og:site_name" content={siteConfig.authorName} />
     <meta property="og:title" content={title} />
