@@ -1,33 +1,16 @@
 ---
+import SocialLinks from './SocialLinks.astro';
 import { siteConfig } from '../config/site';
 
 const currentYear = new Date().getFullYear();
-
-const socialLinks = [
-  { label: 'X / Twitter', href: siteConfig.social.x, external: true },
-  { label: 'LinkedIn', href: siteConfig.social.linkedin, external: true },
-  { label: 'GitHub', href: siteConfig.social.github, external: true },
-  { label: 'Email', href: `mailto:${siteConfig.social.email}`, external: false },
-];
 ---
 
 <footer class="site-footer">
   <div class="site-container site-footer__inner">
-    <ul class="site-footer__links" aria-label="Contact and social links">
-      {
-        socialLinks.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              target={link.external ? '_blank' : undefined}
-              rel={link.external ? 'noopener noreferrer' : undefined}
-            >
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    <SocialLinks
+      class="site-footer__links"
+      ariaLabel="Contact and social links"
+    />
     <p class="site-footer__copy">
       &copy; {currentYear} {siteConfig.authorName}
     </p>

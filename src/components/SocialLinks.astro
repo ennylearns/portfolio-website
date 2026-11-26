@@ -1,0 +1,28 @@
+---
+import { getSocialLinks } from '../config/site';
+
+interface Props {
+  class?: string;
+  ariaLabel?: string;
+  showEmailAddress?: boolean;
+}
+
+const { class: className, ariaLabel, showEmailAddress = false } = Astro.props;
+const links = getSocialLinks({ showEmailAddress });
+---
+
+<ul class={className} aria-label={ariaLabel}>
+  {
+    links.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          target={link.external ? '_blank' : undefined}
+          rel={link.external ? 'noopener noreferrer' : undefined}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))
+  }
+</ul>

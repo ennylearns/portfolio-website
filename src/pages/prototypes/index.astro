@@ -1,12 +1,10 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PrototypeCard from '../../components/PrototypeCard.astro';
 import { siteConfig } from '../../config/site';
+import { getPublishedPrototypes } from '../../lib/prototypes';
 
-const prototypes = (
-  await getCollection('prototypes', ({ data }) => data.published)
-).sort((a, b) => a.data.order - b.data.order);
+const prototypes = await getPublishedPrototypes();
 
 const pageTitle = `Prototypes — ${siteConfig.authorName}`;
 const pageDescription =

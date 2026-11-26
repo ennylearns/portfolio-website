@@ -18,3 +18,25 @@ export const siteConfig = {
     actionUrl: `https://buttondown.com/api/emails/embed-subscribe/${buttondownUsername}`,
   },
 } as const;
+
+export interface SocialLink {
+  label: string;
+  href: string;
+  external: boolean;
+}
+
+export function getSocialLinks(
+  options: { showEmailAddress?: boolean } = {},
+): SocialLink[] {
+  const { showEmailAddress = false } = options;
+  return [
+    { label: 'X / Twitter', href: siteConfig.social.x, external: true },
+    { label: 'LinkedIn', href: siteConfig.social.linkedin, external: true },
+    { label: 'GitHub', href: siteConfig.social.github, external: true },
+    {
+      label: showEmailAddress ? `Email (${siteConfig.social.email})` : 'Email',
+      href: `mailto:${siteConfig.social.email}`,
+      external: false,
+    },
+  ];
+}

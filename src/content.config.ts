@@ -42,7 +42,6 @@ const libraryWorkSchema = z.object({
   summary: z.string().min(1),
   published: z.boolean(),
   theme: z.enum(['Daily Life', 'Business', 'Economy']),
-  publishedAt: z.coerce.date().optional(),
 });
 
 const prototypes = defineCollection({

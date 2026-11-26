@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest';
-import { buildSite, readHtml } from './helpers/site';
+import { buildSite, expectSeoMetadata, readHtml } from './helpers/site';
 
 function expectSubscriberForm(relativePath: string): void {
   const doc = readHtml(relativePath);
@@ -79,48 +79,11 @@ describe('About page & Subscriber signup (built static site)', () => {
     expect(h1).not.toBeNull();
     expect(h1!.textContent).toMatch(/About|Eniola Odunaiya/i);
 
-    const title = doc.querySelector('title')?.textContent.trim();
-    expect(title).toBeTruthy();
-    expect(title).toContain('About');
-    expect(title).toContain('Eniola Odunaiya');
-
-    const metaDesc = doc
-      .querySelector('meta[name="description"]')
-      ?.getAttribute('content');
-    expect(metaDesc).toBeTruthy();
-    expect(metaDesc).toContain('Nigeria');
-
-    const canonical = doc
-      .querySelector('link[rel="canonical"]')
-      ?.getAttribute('href');
-    expect(canonical).toBe('https://eniolaodunaiya.com/about/');
-
-    expect(
-      doc.querySelector('meta[property="og:title"]')?.getAttribute('content'),
-    ).toBe(title);
-    expect(
-      doc
-        .querySelector('meta[property="og:description"]')
-        ?.getAttribute('content'),
-    ).toBe(metaDesc);
-    expect(
-      doc.querySelector('meta[property="og:type"]')?.getAttribute('content'),
-    ).toBe('website');
-    expect(
-      doc.querySelector('meta[property="og:url"]')?.getAttribute('content'),
-    ).toBe(canonical);
-
-    expect(
-      doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content'),
-    ).toBe('summary');
-    expect(
-      doc.querySelector('meta[name="twitter:title"]')?.getAttribute('content'),
-    ).toBe(title);
-    expect(
-      doc
-        .querySelector('meta[name="twitter:description"]')
-        ?.getAttribute('content'),
-    ).toBe(metaDesc);
+    expectSeoMetadata(doc, {
+      canonical: 'https://eniolaodunaiya.com/about/',
+      titleContains: ['About', 'Eniola Odunaiya'],
+      descriptionContains: ['Nigeria'],
+    });
 
     expect(doc.querySelectorAll('script')).toHaveLength(0);
   });

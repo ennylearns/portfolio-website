@@ -3,12 +3,12 @@ import LibraryWorkDetail from '../../../components/LibraryWorkDetail.astro';
 import { getPublishedLibraryWork, type LibraryWork } from '../../../lib/library';
 
 export async function getStaticPaths() {
-  const work = await getPublishedLibraryWork();
-  return work
-    .filter((item) => item.kind === 'Playbook')
-    .map((item) => ({
-      params: { slug: item.slug },
-      props: { work: item },
+  const works = await getPublishedLibraryWork();
+  return works
+    .filter((work) => work.kind === 'Playbook')
+    .map((work) => ({
+      params: { slug: work.slug },
+      props: { work },
     }));
 }
 

@@ -40,7 +40,4 @@ The **AI Design Slop-Remover** runs as a structured review skill inside your cod
 
 ## Try / Inspect it
 
-You can inspect the full skill instructions, prompt rules, and worked examples in the repository, or follow the quick-start guide to run it on your own pages:
-
-- [Inspect the repository on GitHub](https://github.com/eniolaodunaiya/ai-design-slop-remover)
-- [Try the quick-start audit checklist](https://github.com/eniolaodunaiya/ai-design-slop-remover#quick-start)
+You can inspect the full skill instructions, prompt rules, and worked examples in the repository, or follow the quick-start guide to run it on your own pages using the links below.

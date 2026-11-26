@@ -1,39 +1,17 @@
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { buildSite, readHtml } from './helpers/site';
-
-const ROOT_DIR = resolve(import.meta.dirname, '..');
-const PLAYBOOKS_DIR = resolve(ROOT_DIR, 'src/content/playbooks');
-const ESSAYS_DIR = resolve(ROOT_DIR, 'src/content/essays');
-
-function writeFixture(dir: string, filename: string, content: string): string {
-  mkdirSync(dir, { recursive: true });
-  const filePath = resolve(dir, filename);
-  writeFileSync(filePath, content, 'utf-8');
-  return filePath;
-}
-
-function removeFixtures(paths: string[]): void {
-  for (const filePath of paths) {
-    if (existsSync(filePath)) {
-      unlinkSync(filePath);
-    }
-  }
-}
+import {
+  buildSite,
+  createTempSite,
+  expectSeoMetadata,
+  readHtml,
+  type TempSite,
+} from './helpers/site';
 
 describe('Library Day-1 empty state and schema validation (built static site)', () => {
-  const createdFiles: string[] = [];
-
-  afterAll(() => {
-    removeFixtures(createdFiles);
-    createdFiles.length = 0;
-  });
-
-  it('hides Library from top nav on Home and About in Day-1 empty state', () => {
+  it('hides Library from top nav on Home, About, and Prototypes in Day-1 empty state', () => {
     buildSite();
 
-    for (const page of ['index.html', 'about/index.html']) {
+    for (const page of ['index.html', 'about/index.html', 'prototypes/index.html']) {
       const doc = readHtml(page);
       const nav = doc.querySelector('header nav');
       expect(nav).not.toBeNull();
@@ -46,10 +24,11 @@ describe('Library Day-1 empty state and schema validation (built static site)', 
   });
 
   it('fails astro build when frontmatter uses an invalid Theme', () => {
-    const badFixture = writeFixture(
-      ESSAYS_DIR,
-      '_test-invalid-theme.md',
-      `---
+    const site = createTempSite('astro-invalid-theme-');
+    try {
+      site.writeContent(
+        'essays/_test-invalid-theme.md',
+        `---
 title: "Invalid Theme Essay"
 summary: "Should fail schema validation."
 published: true
@@ -58,73 +37,63 @@ theme: "Technology"
 
 Body text.
 `,
-    );
-    createdFiles.push(badFixture);
+      );
 
-    try {
-      expect(() => buildSite()).toThrow();
+      expect(() => site.build()).toThrow();
     } finally {
-      removeFixtures([badFixture]);
+      site.cleanup();
     }
   });
 });
 
-describe('Library populated state with Playbooks, Essays, and Theme filters (built static site)', () => {
-  const createdFiles: string[] = [];
+describe('Library populated state with Playbooks, Essays, and Theme filters (isolated temp build)', () => {
+  let site: TempSite;
 
   beforeAll(() => {
-    try {
-      createdFiles.push(
-        writeFixture(
-          PLAYBOOKS_DIR,
-          '_test-daily-life-playbook.md',
-          `---
+    site = createTempSite('astro-populated-library-');
+    site.writeContent(
+      'playbooks/_test-daily-life-playbook.md',
+      `---
 title: "WhatsApp Receipt Checklist"
 summary: "A practical checklist for Nigerian households and solo operators."
 published: true
 theme: "Daily Life"
-publishedAt: "2026-03-01"
 ---
 
 ## Step 1
 
 Keep every receipt in one place.
 `,
-        ),
-        writeFixture(
-          PLAYBOOKS_DIR,
-          '_test-business-playbook.md',
-          `---
+    );
+    site.writeContent(
+      'playbooks/_test-business-playbook.md',
+      `---
 title: "Customer Follow-Up Playbook"
 summary: "Automate polite follow-ups for Lagos retail stores."
 published: true
 theme: "Business"
-publishedAt: "2026-03-05"
 ---
 
 ## Step 1
 
 Draft concise replies.
 `,
-        ),
-        writeFixture(
-          ESSAYS_DIR,
-          '_test-economy-essay.md',
-          `---
+    );
+    site.writeContent(
+      'essays/_test-economy-essay.md',
+      `---
 title: "AI and Productive Informal Trade"
 summary: "How practical software tools affect productivity across African markets."
 published: true
 theme: "Economy"
-publishedAt: "2026-03-10"
 ---
 
 Long-form analysis of AI in the Nigerian and broader African economy.
 `,
-        ),
-        writeFixture(
-          ESSAYS_DIR,
-          '_test-unpublished-draft.md',
-          `---
+    );
+    site.writeContent(
+      'essays/_test-unpublished-draft.md',
+      `---
 title: "Unpublished Draft Essay"
 summary: "Should never appear on the built site."
 published: false
@@ -133,25 +102,17 @@ theme: "Business"
 
 Draft only.
 `,
-        ),
-      );
-      buildSite();
-    } catch (err) {
-      removeFixtures(createdFiles);
-      createdFiles.length = 0;
-      throw err;
-    }
+    );
+    site.build();
   });
 
   afterAll(() => {
-    removeFixtures(createdFiles);
-    createdFiles.length = 0;
-    buildSite();
+    site?.cleanup();
   });
 
   it('reveals Library in top nav on Home, About, and Library pages', () => {
     for (const page of ['index.html', 'about/index.html', 'library/index.html']) {
-      const doc = readHtml(page);
+      const doc = site.readHtml(page);
       const nav = doc.querySelector('header nav');
       expect(nav).not.toBeNull();
       const libraryLink = nav!
@@ -165,8 +126,8 @@ Draft only.
     }
   });
 
-  it('renders all published Playbooks and Essays with type and Theme badges and excludes unpublished drafts', () => {
-    const doc = readHtml('library/index.html');
+  it('renders all published Playbooks and Essays with type and Theme badges, excludes unpublished drafts, and omits Subscriber form on index', () => {
+    const doc = site.readHtml('library/index.html');
     const main = doc.querySelector('main');
     expect(main).not.toBeNull();
 
@@ -196,18 +157,23 @@ Draft only.
       { text: 'Economy', href: '/library/economy', ariaCurrent: undefined },
     ]);
 
+    expect(main!.querySelector('form')).toBeNull();
+    expectSeoMetadata(doc, {
+      canonical: 'https://eniolaodunaiya.com/library/',
+      titleContains: ['Library', 'Eniola Odunaiya'],
+    });
     expect(doc.querySelectorAll('script')).toHaveLength(0);
   });
 
   it('filters Work cleanly across /library/daily-life, /library/business, and /library/economy with zero scripts', () => {
-    const dailyLifeDoc = readHtml('library/daily-life/index.html');
+    const dailyLifeDoc = site.readHtml('library/daily-life/index.html');
     const dailyLifeText = dailyLifeDoc.querySelector('main')!.textContent;
     expect(dailyLifeText).toContain('WhatsApp Receipt Checklist');
     expect(dailyLifeText).not.toContain('Customer Follow-Up Playbook');
     expect(dailyLifeText).not.toContain('AI and Productive Informal Trade');
     expect(dailyLifeDoc.querySelectorAll('script')).toHaveLength(0);
 
-    const businessDoc = readHtml('library/business/index.html');
+    const businessDoc = site.readHtml('library/business/index.html');
     const businessText = businessDoc.querySelector('main')!.textContent;
     expect(businessText).toContain('Customer Follow-Up Playbook');
     expect(businessText).not.toContain('WhatsApp Receipt Checklist');
@@ -215,7 +181,7 @@ Draft only.
     expect(businessText).not.toContain('Unpublished Draft Essay');
     expect(businessDoc.querySelectorAll('script')).toHaveLength(0);
 
-    const economyDoc = readHtml('library/economy/index.html');
+    const economyDoc = site.readHtml('library/economy/index.html');
     const economyText = economyDoc.querySelector('main')!.textContent;
     expect(economyText).toContain('AI and Productive Informal Trade');
     expect(economyText).not.toContain('WhatsApp Receipt Checklist');
@@ -224,7 +190,7 @@ Draft only.
   });
 
   it('renders Playbook and Essay detail pages with SEO/OG metadata, long-form prose, bottom Subscriber prompt, and zero scripts', () => {
-    const libraryDoc = readHtml('library/index.html');
+    const libraryDoc = site.readHtml('library/index.html');
     const mainLinks = libraryDoc
       .querySelector('main')!
       .querySelectorAll('a')
@@ -259,55 +225,26 @@ Draft only.
       },
     ];
 
-    for (const item of cases) {
-      const doc = readHtml(item.distPath);
+    for (const workCase of cases) {
+      const doc = site.readHtml(workCase.distPath);
       const main = doc.querySelector('main');
       expect(main).not.toBeNull();
 
       const h1 = main!.querySelector('h1');
       expect(h1).not.toBeNull();
-      expect(h1!.textContent).toContain(item.title);
+      expect(h1!.textContent).toContain(workCase.title);
 
       const mainText = main!.textContent;
-      expect(mainText).toContain(item.kind);
-      expect(mainText).toContain(item.theme);
-      expect(mainText).toContain(item.bodySnippet);
+      expect(mainText).toContain(workCase.kind);
+      expect(mainText).toContain(workCase.theme);
+      expect(mainText).toContain(workCase.bodySnippet);
 
-      const title = doc.querySelector('title')?.textContent.trim();
-      expect(title).toContain(item.title);
-      expect(title).toContain('Eniola Odunaiya');
-
-      expect(
-        doc.querySelector('meta[name="description"]')?.getAttribute('content'),
-      ).toBe(item.summary);
-      expect(
-        doc.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-      ).toBe(item.canonical);
-      expect(
-        doc.querySelector('meta[property="og:type"]')?.getAttribute('content'),
-      ).toBe('article');
-      expect(
-        doc.querySelector('meta[property="og:title"]')?.getAttribute('content'),
-      ).toBe(title);
-      expect(
-        doc
-          .querySelector('meta[property="og:description"]')
-          ?.getAttribute('content'),
-      ).toBe(item.summary);
-      expect(
-        doc.querySelector('meta[property="og:url"]')?.getAttribute('content'),
-      ).toBe(item.canonical);
-      expect(
-        doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content'),
-      ).toBe('summary');
-      expect(
-        doc.querySelector('meta[name="twitter:title"]')?.getAttribute('content'),
-      ).toBe(title);
-      expect(
-        doc
-          .querySelector('meta[name="twitter:description"]')
-          ?.getAttribute('content'),
-      ).toBe(item.summary);
+      expectSeoMetadata(doc, {
+        canonical: workCase.canonical,
+        ogType: 'article',
+        titleContains: [workCase.title, 'Eniola Odunaiya'],
+        description: workCase.summary,
+      });
 
       const form = main!.querySelector('form');
       expect(form).not.toBeNull();
@@ -323,12 +260,7 @@ Draft only.
     }
 
     expect(
-      existsSync(
-        resolve(
-          ROOT_DIR,
-          'dist/library/essays/_test-unpublished-draft/index.html',
-        ),
-      ),
+      site.distExists('library/essays/_test-unpublished-draft/index.html'),
     ).toBe(false);
   });
 });

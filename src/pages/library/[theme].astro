@@ -21,7 +21,7 @@ if (!activeTheme) {
   throw new Error(`Unsupported Theme slug: ${themeParam}`);
 }
 
-const items = await getPublishedLibraryWork(activeTheme);
+const works = await getPublishedLibraryWork(activeTheme);
 ---
 
-<LibraryIndex items={items} activeTheme={activeTheme} />
+<LibraryIndex works={works} activeTheme={activeTheme} />

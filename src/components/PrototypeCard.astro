@@ -3,11 +3,9 @@ import type { CollectionEntry } from 'astro:content';
 
 interface Props {
   prototype: CollectionEntry<'prototypes'>;
-  headingTag?: 'h2' | 'h3';
 }
 
-const { prototype, headingTag = 'h2' } = Astro.props;
-const Heading = headingTag;
+const { prototype } = Astro.props;
 const href = `/prototypes/${prototype.id}`;
 ---
 
@@ -15,9 +13,9 @@ const href = `/prototypes/${prototype.id}`;
   <div class="prototype-card__meta">
     <span class="scope-badge">{prototype.data.scope}</span>
   </div>
-  <Heading class="prototype-card__title">
+  <h2 class="prototype-card__title">
     <a href={href}>{prototype.data.title}</a>
-  </Heading>
+  </h2>
   <p class="prototype-card__summary">{prototype.data.summary}</p>
   <p class="prototype-card__action">
     <a href={href}>Inspect Prototype</a>

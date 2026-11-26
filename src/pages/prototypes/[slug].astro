@@ -1,11 +1,12 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SubscriberForm from '../../components/SubscriberForm.astro';
 import { siteConfig } from '../../config/site';
+import { getPublishedPrototypes } from '../../lib/prototypes';
 
 export async function getStaticPaths() {
-  const prototypes = await getCollection('prototypes', ({ data }) => data.published);
+  const prototypes = await getPublishedPrototypes();
   return prototypes.map((prototype) => ({
     params: { slug: prototype.id },
     props: { prototype },
@@ -29,23 +30,6 @@ const { repoUrl, demoUrl } = prototype.data;
       </p>
       <h1 id="prototype-title">{prototype.data.title}</h1>
       <p class="lead">{prototype.data.summary}</p>
-      {
-        (repoUrl || demoUrl) && (
-          <p class="prototype-links">
-            {repoUrl && (
-              <a href={repoUrl} target="_blank" rel="noopener noreferrer">
-                Repository
-              </a>
-            )}
-            {repoUrl && demoUrl && <span aria-hidden="true"> · </span>}
-            {demoUrl && (
-              <a href={demoUrl} target="_blank" rel="noopener noreferrer">
-                Quick start / Demo
-              </a>
-            )}
-          </p>
-        )
-      }
     </header>
 
     <hr class="section-rule" />
@@ -53,6 +37,32 @@ const { repoUrl, demoUrl } = prototype.data;
     <div class="prototype-prose">
       <Content />
     </div>
+
+    {
+      (repoUrl || demoUrl) && (
+        <aside
+          class="prototype-try-links"
+          aria-label="Try or inspect this Prototype"
+        >
+          <ul class="prototype-links">
+            {repoUrl && (
+              <li>
+                <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                  Inspect repository on GitHub
+                </a>
+              </li>
+            )}
+            {demoUrl && (
+              <li>
+                <a href={demoUrl} target="_blank" rel="noopener noreferrer">
+                  Quick start / Demo
+                </a>
+              </li>
+            )}
+          </ul>
+        </aside>
+      )
+    }
   </article>
 
   <hr class="section-rule" />

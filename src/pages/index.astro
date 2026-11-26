@@ -1,15 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PrototypeCard from '../components/PrototypeCard.astro';
 import SubscriberForm from '../components/SubscriberForm.astro';
 import { siteConfig } from '../config/site';
+import { getFeaturedPrototype } from '../lib/prototypes';
 
-const featuredPrototypes = (
-  await getCollection('prototypes', ({ data }) => data.published && data.featured)
-).sort((a, b) => a.data.order - b.data.order);
-
-const featuredPrototype = featuredPrototypes[0];
+const featuredPrototype = await getFeaturedPrototype();
 ---
 
 <BaseLayout

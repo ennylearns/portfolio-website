@@ -3,7 +3,7 @@ import { render } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SubscriberForm from './SubscriberForm.astro';
 import { siteConfig } from '../config/site';
-import { formatWorkDate, type LibraryWork } from '../lib/library';
+import type { LibraryWork } from '../lib/library';
 
 interface Props {
   work: LibraryWork;
@@ -13,7 +13,6 @@ const { work } = Astro.props;
 const { Content } = await render(work.entry);
 
 const pageTitle = `${work.title} — ${siteConfig.authorName}`;
-const formattedDate = formatWorkDate(work.publishedAt);
 ---
 
 <BaseLayout
@@ -35,16 +34,6 @@ const formattedDate = formatWorkDate(work.publishedAt);
         >
           {work.theme}
         </a>
-        {
-          formattedDate && (
-            <time
-              class="work-date"
-              datetime={work.publishedAt?.toISOString().slice(0, 10)}
-            >
-              {formattedDate}
-            </time>
-          )
-        }
       </div>
       <h1>{work.title}</h1>
       <p class="lead">{work.summary}</p>

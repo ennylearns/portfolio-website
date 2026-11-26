@@ -2,7 +2,7 @@
 import LibraryIndex from '../../components/LibraryIndex.astro';
 import { getPublishedLibraryWork } from '../../lib/library';
 
-const items = await getPublishedLibraryWork();
+const works = await getPublishedLibraryWork();
 ---
 
-<LibraryIndex items={items} />
+<LibraryIndex works={works} />

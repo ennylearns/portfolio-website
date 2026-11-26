@@ -1,58 +1,19 @@
-import { execSync } from 'node:child_process';
-import {
-  cpSync,
-  existsSync,
-  mkdtempSync,
-  rmSync,
-  symlinkSync,
-  writeFileSync,
-} from 'node:fs';
-import { tmpdir } from 'node:os';
-import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { buildSite, readHtml } from './helpers/site';
-
-const ROOT_DIR = resolve(import.meta.dirname, '..');
+import {
+  buildSite,
+  createTempSite,
+  distExists,
+  expectSeoMetadata,
+  readHtml,
+} from './helpers/site';
 
 function expectBuildFailureWithPrototype(frontmatter: string): void {
-  const tempRoot = mkdtempSync(resolve(tmpdir(), 'astro-invalid-proto-'));
+  const site = createTempSite('astro-invalid-proto-');
   try {
-    cpSync(resolve(ROOT_DIR, 'src'), resolve(tempRoot, 'src'), {
-      recursive: true,
-    });
-    cpSync(resolve(ROOT_DIR, 'public'), resolve(tempRoot, 'public'), {
-      recursive: true,
-    });
-    cpSync(
-      resolve(ROOT_DIR, 'astro.config.mjs'),
-      resolve(tempRoot, 'astro.config.mjs'),
-    );
-    cpSync(
-      resolve(ROOT_DIR, 'tsconfig.json'),
-      resolve(tempRoot, 'tsconfig.json'),
-    );
-    cpSync(resolve(ROOT_DIR, 'package.json'), resolve(tempRoot, 'package.json'));
-    symlinkSync(
-      resolve(ROOT_DIR, 'node_modules'),
-      resolve(tempRoot, 'node_modules'),
-      'junction',
-    );
-
-    writeFileSync(
-      resolve(tempRoot, 'src/content/prototypes/invalid-prototype.md'),
-      frontmatter,
-      'utf-8',
-    );
-
-    expect(() => {
-      execSync('pnpm build', {
-        cwd: tempRoot,
-        stdio: 'pipe',
-        encoding: 'utf-8',
-      });
-    }).toThrow();
+    site.writeContent('prototypes/invalid-prototype.md', frontmatter);
+    expect(() => site.build()).toThrow();
   } finally {
-    rmSync(tempRoot, { recursive: true, force: true });
+    site.cleanup();
   }
 }
 
@@ -86,41 +47,15 @@ describe('Prototypes showcase & AI design slop-remover (built static site)', () 
       .filter((a) => a.getAttribute('href') === '/prototypes/ai-design-slop-remover');
     expect(detailLinks.length).toBeGreaterThanOrEqual(1);
 
-    const title = doc.querySelector('title')?.textContent.trim();
-    expect(title).toBeTruthy();
-    expect(title).toContain('Prototypes');
-    expect(title).toContain('Eniola Odunaiya');
-
-    const metaDesc = doc
-      .querySelector('meta[name="description"]')
-      ?.getAttribute('content');
-    expect(metaDesc).toBeTruthy();
-
-    const canonical = doc
-      .querySelector('link[rel="canonical"]')
-      ?.getAttribute('href');
-    expect(canonical).toBe('https://eniolaodunaiya.com/prototypes/');
-
-    expect(
-      doc.querySelector('meta[property="og:title"]')?.getAttribute('content'),
-    ).toBe(title);
-    expect(
-      doc
-        .querySelector('meta[property="og:description"]')
-        ?.getAttribute('content'),
-    ).toBe(metaDesc);
-    expect(
-      doc.querySelector('meta[property="og:url"]')?.getAttribute('content'),
-    ).toBe(canonical);
-
-    expect(
-      doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content'),
-    ).toBe('summary');
+    expectSeoMetadata(doc, {
+      canonical: 'https://eniolaodunaiya.com/prototypes/',
+      titleContains: ['Prototypes', 'Eniola Odunaiya'],
+    });
 
     expect(doc.querySelectorAll('script')).toHaveLength(0);
   });
 
-  it('renders AI Design Slop-Remover Prototype detail page with scope badge, all 4 sections, Before/After SVGs, external links, SEO metadata, bottom Subscriber prompt, and zero scripts', () => {
+  it('renders AI Design Slop-Remover Prototype detail page with scope badge, all 4 sections, Before/After SVGs, Try/Inspect links outside header, SEO metadata, bottom Subscriber prompt, and zero scripts', () => {
     const doc = readHtml('prototypes/ai-design-slop-remover/index.html');
     const main = doc.querySelector('main');
     expect(main).not.toBeNull();
@@ -138,6 +73,13 @@ describe('Prototypes showcase & AI design slop-remover (built static site)', () 
       .find((a) => a.getAttribute('href') === '/prototypes');
     expect(prototypesNavLink?.getAttribute('aria-current')).toBe('page');
 
+    const prototypeHeader = main!.querySelector('header.prototype-header');
+    expect(prototypeHeader).not.toBeNull();
+    const headerExternalLinks = prototypeHeader!
+      .querySelectorAll('a')
+      .filter((a) => (a.getAttribute('href') ?? '').startsWith('https://'));
+    expect(headerExternalLinks).toHaveLength(0);
+
     const headings = main!
       .querySelectorAll('h2')
       .map((h) => h.textContent.trim());
@@ -154,19 +96,29 @@ describe('Prototypes showcase & AI design slop-remover (built static site)', () 
     for (const img of images) {
       expect(img.getAttribute('alt')?.trim()).toBeTruthy();
       const rel = (img.getAttribute('src') ?? '').replace(/^\//, '');
-      const fullPath = resolve(import.meta.dirname, '..', 'dist', rel);
-      expect(existsSync(fullPath)).toBe(true);
+      expect(distExists(rel)).toBe(true);
     }
 
-    const externalLinks = main!
+    const article = main!.querySelector('article');
+    expect(article).not.toBeNull();
+    const tryLinksContainer = article!.querySelector('.prototype-try-links');
+    expect(tryLinksContainer).not.toBeNull();
+
+    const tryHrefs = tryLinksContainer!
       .querySelectorAll('a')
-      .map((a) => a.getAttribute('href') ?? '')
-      .filter((href) => href.startsWith('https://'));
-    expect(
-      externalLinks.some((href) =>
-        href.includes('github.com/eniolaodunaiya/ai-design-slop-remover'),
-      ),
-    ).toBe(true);
+      .map((a) => a.getAttribute('href') ?? '');
+    expect(tryHrefs).toContain(
+      'https://github.com/eniolaodunaiya/ai-design-slop-remover',
+    );
+    expect(tryHrefs).toContain(
+      'https://github.com/eniolaodunaiya/ai-design-slop-remover#quick-start',
+    );
+
+    const articleHtml = article!.innerHTML;
+    expect(articleHtml.indexOf('Try / Inspect it')).toBeGreaterThan(-1);
+    expect(articleHtml.indexOf('prototype-try-links')).toBeGreaterThan(
+      articleHtml.indexOf('Try / Inspect it'),
+    );
 
     const form = main!.querySelector('form');
     expect(form).not.toBeNull();
@@ -178,36 +130,11 @@ describe('Prototypes showcase & AI design slop-remover (built static site)', () 
     expect(emailInput).not.toBeNull();
     expect(emailInput!.hasAttribute('required')).toBe(true);
 
-    const title = doc.querySelector('title')?.textContent.trim();
-    expect(title).toContain('AI Design Slop-Remover');
-    expect(title).toContain('Eniola Odunaiya');
-
-    const metaDesc = doc
-      .querySelector('meta[name="description"]')
-      ?.getAttribute('content');
-    expect(metaDesc).toBeTruthy();
-
-    const canonical = doc
-      .querySelector('link[rel="canonical"]')
-      ?.getAttribute('href');
-    expect(canonical).toBe(
-      'https://eniolaodunaiya.com/prototypes/ai-design-slop-remover/',
-    );
-
-    expect(
-      doc.querySelector('meta[property="og:title"]')?.getAttribute('content'),
-    ).toBe(title);
-    expect(
-      doc
-        .querySelector('meta[property="og:description"]')
-        ?.getAttribute('content'),
-    ).toBe(metaDesc);
-    expect(
-      doc.querySelector('meta[property="og:url"]')?.getAttribute('content'),
-    ).toBe(canonical);
-    expect(
-      doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content'),
-    ).toBe('summary');
+    expectSeoMetadata(doc, {
+      canonical: 'https://eniolaodunaiya.com/prototypes/ai-design-slop-remover/',
+      ogType: 'article',
+      titleContains: ['AI Design Slop-Remover', 'Eniola Odunaiya'],
+    });
 
     expect(doc.querySelectorAll('script')).toHaveLength(0);
   });

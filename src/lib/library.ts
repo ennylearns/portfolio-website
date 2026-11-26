@@ -25,98 +25,70 @@ export function slugToTheme(slug: string): Theme | undefined {
   return SLUG_TO_THEME[slug as ThemeSlug];
 }
 
-export type LibraryWork =
-  | {
-      kind: 'Playbook';
-      slug: string;
-      href: string;
-      title: string;
-      summary: string;
-      theme: Theme;
-      themeSlug: ThemeSlug;
-      publishedAt?: Date;
-      entry: CollectionEntry<'playbooks'>;
-    }
-  | {
-      kind: 'Essay';
-      slug: string;
-      href: string;
-      title: string;
-      summary: string;
-      theme: Theme;
-      themeSlug: ThemeSlug;
-      publishedAt?: Date;
-      entry: CollectionEntry<'essays'>;
-    };
+type LibraryCollection = 'playbooks' | 'essays';
+type LibraryKind = 'Playbook' | 'Essay';
 
-function mapPlaybook(entry: CollectionEntry<'playbooks'>): LibraryWork {
+const KIND_BY_COLLECTION: Record<LibraryCollection, LibraryKind> = {
+  playbooks: 'Playbook',
+  essays: 'Essay',
+};
+
+export type LibraryWork = {
+  [K in LibraryCollection]: {
+    kind: (typeof KIND_BY_COLLECTION)[K];
+    slug: string;
+    href: string;
+    title: string;
+    summary: string;
+    theme: Theme;
+    themeSlug: ThemeSlug;
+    entry: CollectionEntry<K>;
+  };
+}[LibraryCollection];
+
+function mapLibraryWork<K extends LibraryCollection>(
+  collection: K,
+  entry: CollectionEntry<K>,
+): LibraryWork {
   return {
-    kind: 'Playbook',
+    kind: KIND_BY_COLLECTION[collection],
     slug: entry.id,
-    href: `/library/playbooks/${entry.id}`,
+    href: `/library/${collection}/${entry.id}`,
     title: entry.data.title,
     summary: entry.data.summary,
     theme: entry.data.theme,
     themeSlug: themeToSlug(entry.data.theme),
-    publishedAt: entry.data.publishedAt,
     entry,
-  };
+  } as LibraryWork;
 }
 
-function mapEssay(entry: CollectionEntry<'essays'>): LibraryWork {
-  return {
-    kind: 'Essay',
-    slug: entry.id,
-    href: `/library/essays/${entry.id}`,
-    title: entry.data.title,
-    summary: entry.data.summary,
-    theme: entry.data.theme,
-    themeSlug: themeToSlug(entry.data.theme),
-    publishedAt: entry.data.publishedAt,
-    entry,
-  };
-}
-
-function compareWork(a: LibraryWork, b: LibraryWork): number {
-  const timeA = a.publishedAt ? a.publishedAt.getTime() : -Infinity;
-  const timeB = b.publishedAt ? b.publishedAt.getTime() : -Infinity;
-  if (timeA !== timeB) {
-    return timeB - timeA;
-  }
-  return a.title.localeCompare(b.title);
-}
-
-export async function getPublishedLibraryWork(theme?: Theme): Promise<LibraryWork[]> {
+async function fetchPublishedCollections() {
   const [playbooks, essays] = await Promise.all([
     getCollection('playbooks', ({ data }) => data.published),
     getCollection('essays', ({ data }) => data.published),
   ]);
+  return { playbooks, essays };
+}
+
+function compareWork(a: LibraryWork, b: LibraryWork): number {
+  return a.title.localeCompare(b.title) || a.slug.localeCompare(b.slug);
+}
+
+export async function getPublishedLibraryWork(theme?: Theme): Promise<LibraryWork[]> {
+  const { playbooks, essays } = await fetchPublishedCollections();
 
   const combined: LibraryWork[] = [
-    ...playbooks.map(mapPlaybook),
-    ...essays.map(mapEssay),
+    ...playbooks.map((entry) => mapLibraryWork('playbooks', entry)),
+    ...essays.map((entry) => mapLibraryWork('essays', entry)),
   ].sort(compareWork);
 
   if (!theme) {
     return combined;
   }
-  return combined.filter((item) => item.theme === theme);
+  return combined.filter((work) => work.theme === theme);
 }
 
 export async function hasLibraryWork(): Promise<boolean> {
-  const [playbooks, essays] = await Promise.all([
-    getCollection('playbooks', ({ data }) => data.published),
-    getCollection('essays', ({ data }) => data.published),
-  ]);
+  const { playbooks, essays } = await fetchPublishedCollections();
   return playbooks.length + essays.length > 0;
-}
-
-export function formatWorkDate(date?: Date): string | undefined {
-  if (!date) return undefined;
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(date);
 }

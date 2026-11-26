@@ -1,7 +1,11 @@
-import { existsSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { buildSite, readDistFile, readHtml } from './helpers/site';
+import {
+  buildSite,
+  distExists,
+  expectSeoMetadata,
+  readDistFile,
+  readHtml,
+} from './helpers/site';
 
 describe('Home page (built static site)', () => {
   beforeAll(() => {
@@ -78,46 +82,11 @@ describe('Home page (built static site)', () => {
     expect(h1).not.toBeNull();
     expect(h1!.textContent).toContain('Eniola Odunaiya');
 
-    const title = doc.querySelector('title')?.textContent.trim();
-    expect(title).toBeTruthy();
-    expect(title).toContain('Eniola Odunaiya');
-
-    const metaDesc = doc
-      .querySelector('meta[name="description"]')
-      ?.getAttribute('content');
-    expect(metaDesc).toBeTruthy();
-    expect(metaDesc).toContain('Nigeria');
-
-    expect(
-      doc.querySelector('link[rel="canonical"]')?.getAttribute('href'),
-    ).toBe('https://eniolaodunaiya.com/');
-
-    expect(
-      doc.querySelector('meta[property="og:title"]')?.getAttribute('content'),
-    ).toBe(title);
-    expect(
-      doc
-        .querySelector('meta[property="og:description"]')
-        ?.getAttribute('content'),
-    ).toBe(metaDesc);
-    expect(
-      doc.querySelector('meta[property="og:type"]')?.getAttribute('content'),
-    ).toBe('website');
-    expect(
-      doc.querySelector('meta[property="og:url"]')?.getAttribute('content'),
-    ).toBe('https://eniolaodunaiya.com/');
-
-    expect(
-      doc.querySelector('meta[name="twitter:card"]')?.getAttribute('content'),
-    ).toBe('summary');
-    expect(
-      doc.querySelector('meta[name="twitter:title"]')?.getAttribute('content'),
-    ).toBe(title);
-    expect(
-      doc
-        .querySelector('meta[name="twitter:description"]')
-        ?.getAttribute('content'),
-    ).toBe(metaDesc);
+    expectSeoMetadata(doc, {
+      canonical: 'https://eniolaodunaiya.com/',
+      titleContains: ['Eniola Odunaiya'],
+      descriptionContains: ['Nigeria'],
+    });
 
     expect(doc.querySelectorAll('script')).toHaveLength(0);
   });
@@ -134,8 +103,7 @@ describe('Home page (built static site)', () => {
       const href = link.getAttribute('href') ?? '';
       expect(href).not.toMatch(/^https?:\/\//i);
       const rel = href.replace(/^\//, '');
-      const full = resolve(import.meta.dirname, '..', 'dist', rel);
-      expect(existsSync(full)).toBe(true);
+      expect(distExists(rel)).toBe(true);
       cssParts.push(readDistFile(rel));
     }
 

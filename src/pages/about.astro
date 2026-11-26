@@ -1,22 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SocialLinks from '../components/SocialLinks.astro';
 import SubscriberForm from '../components/SubscriberForm.astro';
 import { siteConfig } from '../config/site';
 
 const pageTitle = `About — ${siteConfig.authorName}`;
 const pageDescription =
   'Eniola Odunaiya is an AI builder-writer in Nigeria focused on practical AI for daily life, small businesses, and economic growth across Nigeria and Africa.';
-
-const channels = [
-  { label: 'X / Twitter', href: siteConfig.social.x, external: true },
-  { label: 'LinkedIn', href: siteConfig.social.linkedin, external: true },
-  { label: 'GitHub', href: siteConfig.social.github, external: true },
-  {
-    label: `Email (${siteConfig.social.email})`,
-    href: `mailto:${siteConfig.social.email}`,
-    external: false,
-  },
-];
 ---
 
 <BaseLayout title={pageTitle} description={pageDescription}>
@@ -75,21 +65,7 @@ const channels = [
       You can follow new <strong>Work</strong> as it ships, inspect source
       repositories, or reach me directly:
     </p>
-    <ul class="contact-list">
-      {
-        channels.map((channel) => (
-          <li>
-            <a
-              href={channel.href}
-              target={channel.external ? '_blank' : undefined}
-              rel={channel.external ? 'noopener noreferrer' : undefined}
-            >
-              {channel.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    <SocialLinks class="contact-list" showEmailAddress />
   </section>
 
   <hr class="section-rule" />

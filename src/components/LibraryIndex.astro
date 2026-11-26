@@ -1,21 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SubscriberForm from './SubscriberForm.astro';
 import { siteConfig } from '../config/site';
 import {
   THEMES,
-  formatWorkDate,
   themeToSlug,
   type LibraryWork,
   type Theme,
 } from '../lib/library';
 
 interface Props {
-  items: LibraryWork[];
+  works: LibraryWork[];
   activeTheme?: Theme;
 }
 
-const { items, activeTheme } = Astro.props;
+const { works, activeTheme } = Astro.props;
 
 const pageTitle = activeTheme
   ? `${activeTheme} — Library — ${siteConfig.authorName}`
@@ -66,7 +64,7 @@ const filterLinks = [
 
   <section aria-label="Published Work">
     {
-      items.length === 0 ? (
+      works.length === 0 ? (
         <p class="muted">
           {activeTheme
             ? `No Playbooks or Essays published under ${activeTheme} yet.`
@@ -74,35 +72,20 @@ const filterLinks = [
         </p>
       ) : (
         <ul class="work-list">
-          {items.map((item) => {
-            const formattedDate = formatWorkDate(item.publishedAt);
-            return (
-              <li class="work-card">
-                <div class="work-meta">
-                  <span class="badge badge--kind">{item.kind}</span>
-                  <span class="badge badge--theme">{item.theme}</span>
-                  {formattedDate && (
-                    <time
-                      class="work-date"
-                      datetime={item.publishedAt?.toISOString().slice(0, 10)}
-                    >
-                      {formattedDate}
-                    </time>
-                  )}
-                </div>
-                <h2>
-                  <a href={item.href}>{item.title}</a>
-                </h2>
-                <p class="work-summary">{item.summary}</p>
-              </li>
-            );
-          })}
+          {works.map((work) => (
+            <li class="work-card">
+              <div class="work-meta">
+                <span class="badge badge--kind">{work.kind}</span>
+                <span class="badge badge--theme">{work.theme}</span>
+              </div>
+              <h2>
+                <a href={work.href}>{work.title}</a>
+              </h2>
+              <p class="work-summary">{work.summary}</p>
+            </li>
+          ))}
         </ul>
       )
     }
   </section>
-
-  <hr class="section-rule" />
-
-  <SubscriberForm idSuffix="library-subscriber" />
 </BaseLayout>
