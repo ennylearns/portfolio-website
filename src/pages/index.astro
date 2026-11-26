@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
+---
+
+<BaseLayout
+  title={siteConfig.title}
+  description={siteConfig.description}
+>
+  <section aria-labelledby="home-heading">
+    <p class="eyebrow">Practical AI · Nigeria &amp; Africa</p>
+    <h1 id="home-heading">Eniola Odunaiya</h1>
+    <p class="lead">
+      I build and write about practical AI that improves daily life, strengthens
+      small businesses, and grows the economy in Nigeria and across Africa.
+    </p>
+  </section>
+
+  <hr class="section-rule" />
+
+  <section aria-labelledby="bio-heading">
+    <h2 id="bio-heading">Builder &amp; writer</h2>
+    <p>
+      I am an AI builder-writer based in Nigeria, focused on turning frontier
+      software into dependable tools and step-by-step Playbooks for African
+      founders, operators, and decision-makers.
+    </p>
+    <p>
+      <a href="/about">Read more about my work and story</a>
+    </p>
+  </section>
+</BaseLayout>
