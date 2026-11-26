@@ -1,7 +1,15 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PrototypeCard from '../components/PrototypeCard.astro';
 import SubscriberForm from '../components/SubscriberForm.astro';
 import { siteConfig } from '../config/site';
+
+const featuredPrototypes = (
+  await getCollection('prototypes', ({ data }) => data.published && data.featured)
+).sort((a, b) => a.data.order - b.data.order);
+
+const featuredPrototype = featuredPrototypes[0];
 ---
 
 <BaseLayout
@@ -16,6 +24,21 @@ import { siteConfig } from '../config/site';
       small businesses, and grows the economy in Nigeria and across Africa.
     </p>
   </section>
+
+  {
+    featuredPrototype && (
+      <>
+        <hr class="section-rule" />
+
+        <section aria-labelledby="featured-prototype-heading">
+          <p class="eyebrow" id="featured-prototype-heading">
+            Featured Prototype
+          </p>
+          <PrototypeCard prototype={featuredPrototype} />
+        </section>
+      </>
+    )
+  }
 
   <hr class="section-rule" />
 

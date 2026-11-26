@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PrototypeCard from '../../components/PrototypeCard.astro';
+import { siteConfig } from '../../config/site';
+
+const prototypes = (
+  await getCollection('prototypes', ({ data }) => data.published)
+).sort((a, b) => a.data.order - b.data.order);
+
+const pageTitle = `Prototypes — ${siteConfig.authorName}`;
+const pageDescription =
+  'Working AI Prototypes built by Eniola Odunaiya across AI Craft and Nigeria / Africa workflows.';
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <section aria-labelledby="prototypes-heading">
+    <p class="eyebrow">Working Tools &amp; Skills</p>
+    <h1 id="prototypes-heading">Prototypes</h1>
+    <p class="lead">
+      Working AI tools, skills, and demos built to solve concrete problems—spanning
+      general <strong>AI Craft</strong> and practical
+      <strong>Nigeria / Africa</strong> workflows.
+    </p>
+  </section>
+
+  <hr class="section-rule" />
+
+  <section aria-label="Published Prototypes">
+    <ul class="prototype-list">
+      {
+        prototypes.map((prototype) => (
+          <li>
+            <PrototypeCard prototype={prototype} />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
