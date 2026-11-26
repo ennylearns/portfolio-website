@@ -1,0 +1,15 @@
+# Build outputs & dependencies
+dist/
+node_modules/
+.astro/
+.wrangler/
+.worktrees/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db

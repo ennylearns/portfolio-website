@@ -1,0 +1,36 @@
+---
+import { siteConfig } from '../config/site';
+
+const pathname = Astro.url.pathname;
+
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Prototypes', href: '/prototypes' },
+  { label: 'About', href: '/about' },
+];
+
+function isCurrent(href: string): boolean {
+  if (href === '/') {
+    return pathname === '/';
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
+---
+
+<header class="site-header">
+  <div class="site-container site-header__inner">
+    <a href="/" class="site-brand">{siteConfig.authorName}</a>
+    <nav class="site-nav" aria-label="Primary">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            aria-current={isCurrent(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
