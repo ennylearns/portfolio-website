@@ -1,0 +1,27 @@
+---
+import LibraryIndex from '../../components/LibraryIndex.astro';
+import {
+  THEMES,
+  getPublishedLibraryWork,
+  slugToTheme,
+  themeToSlug,
+  type Theme,
+} from '../../lib/library';
+
+export function getStaticPaths() {
+  return THEMES.map((theme) => ({
+    params: { theme: themeToSlug(theme) },
+  }));
+}
+
+const themeParam = Astro.params.theme ?? '';
+const activeTheme: Theme | undefined = slugToTheme(themeParam);
+
+if (!activeTheme) {
+  throw new Error(`Unsupported Theme slug: ${themeParam}`);
+}
+
+const items = await getPublishedLibraryWork(activeTheme);
+---
+
+<LibraryIndex items={items} activeTheme={activeTheme} />

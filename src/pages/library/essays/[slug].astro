@@ -1,0 +1,22 @@
+---
+import LibraryWorkDetail from '../../../components/LibraryWorkDetail.astro';
+import { getPublishedLibraryWork, type LibraryWork } from '../../../lib/library';
+
+export async function getStaticPaths() {
+  const work = await getPublishedLibraryWork();
+  return work
+    .filter((item) => item.kind === 'Essay')
+    .map((item) => ({
+      params: { slug: item.slug },
+      props: { work: item },
+    }));
+}
+
+interface Props {
+  work: LibraryWork;
+}
+
+const { work } = Astro.props;
+---
+
+<LibraryWorkDetail work={work} />

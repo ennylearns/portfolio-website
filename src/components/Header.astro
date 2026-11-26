@@ -1,11 +1,14 @@
 ---
 import { siteConfig } from '../config/site';
+import { hasLibraryWork } from '../lib/library';
 
 const pathname = Astro.url.pathname;
+const showLibrary = await hasLibraryWork();
 
 const navItems = [
   { label: 'Home', href: '/' },
   { label: 'Prototypes', href: '/prototypes' },
+  ...(showLibrary ? [{ label: 'Library', href: '/library' }] : []),
   { label: 'About', href: '/about' },
 ];
 

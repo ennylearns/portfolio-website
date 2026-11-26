@@ -1,0 +1,108 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubscriberForm from './SubscriberForm.astro';
+import { siteConfig } from '../config/site';
+import {
+  THEMES,
+  formatWorkDate,
+  themeToSlug,
+  type LibraryWork,
+  type Theme,
+} from '../lib/library';
+
+interface Props {
+  items: LibraryWork[];
+  activeTheme?: Theme;
+}
+
+const { items, activeTheme } = Astro.props;
+
+const pageTitle = activeTheme
+  ? `${activeTheme} — Library — ${siteConfig.authorName}`
+  : `Library — ${siteConfig.authorName}`;
+
+const pageDescription = activeTheme
+  ? `Playbooks and Essays by ${siteConfig.authorName} on ${activeTheme} for Nigeria and Africa.`
+  : `Playbooks and Essays by ${siteConfig.authorName} across Daily Life, Business, and Economy.`;
+
+const filterLinks = [
+  { label: 'All', href: '/library', current: !activeTheme },
+  ...THEMES.map((theme) => ({
+    label: theme,
+    href: `/library/${themeToSlug(theme)}`,
+    current: activeTheme === theme,
+  })),
+];
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <section aria-labelledby="library-heading">
+    <p class="eyebrow">Library · Playbooks &amp; Essays</p>
+    <h1 id="library-heading">
+      {activeTheme ? `Library: ${activeTheme}` : 'Library'}
+    </h1>
+    <p class="lead">
+      Step-by-step <strong>Playbooks</strong> and long-form
+      <strong>Essays</strong> on how practical AI improves daily life,
+      strengthens small businesses, and shapes the economy in Nigeria and across
+      Africa.
+    </p>
+
+    <nav class="theme-filter" aria-label="Filter Library by Theme">
+      {
+        filterLinks.map((link) => (
+          <a
+            href={link.href}
+            aria-current={link.current ? 'page' : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </section>
+
+  <hr class="section-rule" />
+
+  <section aria-label="Published Work">
+    {
+      items.length === 0 ? (
+        <p class="muted">
+          {activeTheme
+            ? `No Playbooks or Essays published under ${activeTheme} yet.`
+            : 'No Playbooks or Essays published yet.'}
+        </p>
+      ) : (
+        <ul class="work-list">
+          {items.map((item) => {
+            const formattedDate = formatWorkDate(item.publishedAt);
+            return (
+              <li class="work-card">
+                <div class="work-meta">
+                  <span class="badge badge--kind">{item.kind}</span>
+                  <span class="badge badge--theme">{item.theme}</span>
+                  {formattedDate && (
+                    <time
+                      class="work-date"
+                      datetime={item.publishedAt?.toISOString().slice(0, 10)}
+                    >
+                      {formattedDate}
+                    </time>
+                  )}
+                </div>
+                <h2>
+                  <a href={item.href}>{item.title}</a>
+                </h2>
+                <p class="work-summary">{item.summary}</p>
+              </li>
+            );
+          })}
+        </ul>
+      )
+    }
+  </section>
+
+  <hr class="section-rule" />
+
+  <SubscriberForm idSuffix="library-subscriber" />
+</BaseLayout>
