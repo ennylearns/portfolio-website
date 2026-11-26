@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 380" width="640" height="380" role="img" aria-label="After: crisp light-mode editorial layout with generous whitespace, clear serif heading, plain English value proposition, and grounded terracotta accent">
+  <rect width="640" height="380" rx="8" fill="#FAF8F5" stroke="#E5DFD5" />
+  <line x1="48" y1="62" x2="592" y2="62" stroke="#E5DFD5" stroke-width="1" />
+  <text x="48" y="44" font-family="Georgia, serif" font-size="14" font-weight="700" fill="#1A1918">Lagos Ledger</text>
+  <text x="456" y="44" font-family="system-ui, sans-serif" font-size="12" fill="#57534E">How it works</text>
+  <text x="548" y="44" font-family="system-ui, sans-serif" font-size="12" fill="#57534E">Pricing</text>
+
+  <text x="48" y="104" font-family="system-ui, sans-serif" font-size="11" font-weight="600" letter-spacing="1.2" fill="#57534E">FOR NIGERIAN RETAIL SHOPS</text>
+  <text x="48" y="140" font-family="Georgia, serif" font-size="26" font-weight="600" fill="#1A1918">Daily stock and cash reconciliation</text>
+  <text x="48" y="170" font-family="Georgia, serif" font-size="26" font-weight="600" fill="#1A1918">that works over WhatsApp.</text>
+
+  <text x="48" y="204" font-family="system-ui, sans-serif" font-size="13" fill="#57534E">Send closing sales notes in plain English or Pidgin. Get a clean</text>
+  <text x="48" y="223" font-family="system-ui, sans-serif" font-size="13" fill="#57534E">daily balance sheet and low-stock alert in under two minutes.</text>
+
+  <rect x="48" y="244" width="156" height="34" rx="3" fill="#9A3412" />
+  <text x="126" y="265" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" font-weight="600" fill="#FAF8F5">Inspect sample sheet</text>
+
+  <line x1="48" y1="302" x2="592" y2="302" stroke="#E5DFD5" stroke-width="1" />
+  <rect x="48" y="320" width="256" height="36" rx="3" fill="#F3EFE8" stroke="#E5DFD5" />
+  <text x="62" y="342" font-family="system-ui, sans-serif" font-size="12" fill="#1A1918">Loads in 18 KB on 3G mobile</text>
+
+  <rect x="320" y="320" width="272" height="36" rx="3" fill="#F3EFE8" stroke="#E5DFD5" />
+  <text x="334" y="342" font-family="system-ui, sans-serif" font-size="12" fill="#1A1918">Zero jargon · Clear local pricing</text>
+</svg>

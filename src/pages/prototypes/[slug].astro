@@ -1,0 +1,61 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SubscriberForm from '../../components/SubscriberForm.astro';
+import { siteConfig } from '../../config/site';
+
+export async function getStaticPaths() {
+  const prototypes = await getCollection('prototypes', ({ data }) => data.published);
+  return prototypes.map((prototype) => ({
+    params: { slug: prototype.id },
+    props: { prototype },
+  }));
+}
+
+const { prototype } = Astro.props;
+const { Content } = await render(prototype);
+
+const pageTitle = `${prototype.data.title} — ${siteConfig.authorName}`;
+const pageDescription = prototype.data.summary;
+const { repoUrl, demoUrl } = prototype.data;
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} ogType="article">
+  <article aria-labelledby="prototype-title">
+    <header class="prototype-header">
+      <p class="eyebrow">
+        <a href="/prototypes">Prototypes</a> ·{' '}
+        <span class="scope-badge">{prototype.data.scope}</span>
+      </p>
+      <h1 id="prototype-title">{prototype.data.title}</h1>
+      <p class="lead">{prototype.data.summary}</p>
+      {
+        (repoUrl || demoUrl) && (
+          <p class="prototype-links">
+            {repoUrl && (
+              <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                Repository
+              </a>
+            )}
+            {repoUrl && demoUrl && <span aria-hidden="true"> · </span>}
+            {demoUrl && (
+              <a href={demoUrl} target="_blank" rel="noopener noreferrer">
+                Quick start / Demo
+              </a>
+            )}
+          </p>
+        )
+      }
+    </header>
+
+    <hr class="section-rule" />
+
+    <div class="prototype-prose">
+      <Content />
+    </div>
+  </article>
+
+  <hr class="section-rule" />
+
+  <SubscriberForm idSuffix="prototype-subscriber" />
+</BaseLayout>
