@@ -4,9 +4,13 @@
 
 **Blocked by:** 01: Editorial shell, Home thesis & built-site test harness
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] About page renders Eniola Odunaiya's story, Nigeria/Africa AI mission, and working links to X/Twitter, LinkedIn, GitHub, and direct email
-- [ ] About page renders valid SEO and Open Graph / Twitter Card metadata and is reachable from the top navigation and Home bio
-- [ ] Reusable Buttondown signup form renders on both Home and About with a valid email input, submit control, configurable Buttondown target, and explicit no-schedule copy (*notified only when new **Work** ships*)
-- [ ] Built-site tests verify About page rendering, distribution/contact links, and the Buttondown **Subscriber** form markup on both Home and About
+- [x] About page renders Eniola Odunaiya's story, Nigeria/Africa AI mission, and working links to X/Twitter, LinkedIn, GitHub, and direct email
+- [x] About page renders valid SEO and Open Graph / Twitter Card metadata and is reachable from the top navigation and Home bio
+- [x] Reusable Buttondown signup form renders on both Home and About with a valid email input, submit control, configurable Buttondown target, and explicit no-schedule copy (*notified only when new **Work** ships*)
+- [x] Built-site tests verify About page rendering, distribution/contact links, and the Buttondown **Subscriber** form markup on both Home and About
+
+## Comments
+
+- Resolved on integration branch `feat/personal-website` (merged from `ticket/02-about-page-and-subscriber-signup`, verified via `pnpm build && pnpm test`).

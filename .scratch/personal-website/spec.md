@@ -1,6 +1,6 @@
 # Eniola Odunaiya — Personal Website (Practical AI for Nigeria & Africa)
 
-Status: ready-for-agent
+Status: resolved
 
 ## Problem Statement
 

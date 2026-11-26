@@ -4,11 +4,15 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-agent
+**Status:** resolved
 
-- [ ] Astro static site builds cleanly for Cloudflare Workers Static Assets / Pages with zero unnecessary client-side JavaScript on the Home page
-- [ ] Light-mode editorial layout renders with readable mobile-first typography, generous whitespace, a grounded warm accent, and zero generic AI-gradient aesthetics
-- [ ] Header displays **Eniola Odunaiya** and active navigation links; Footer displays X/Twitter, LinkedIn, GitHub, direct email, and copyright
-- [ ] Home page renders Eniola Odunaiya's name, Nigeria/Africa practical AI thesis, and short bio with a link to About
-- [ ] Home page outputs semantic HTML headings, descriptive `<title>`, meta description, and Open Graph / Twitter Card metadata
-- [ ] Automated test harness builds the static site and verifies the rendered HTML output at the built-site seam
+- [x] Astro static site builds cleanly for Cloudflare Workers Static Assets / Pages with zero unnecessary client-side JavaScript on the Home page
+- [x] Light-mode editorial layout renders with readable mobile-first typography, generous whitespace, a grounded warm accent, and zero generic AI-gradient aesthetics
+- [x] Header displays **Eniola Odunaiya** and active navigation links; Footer displays X/Twitter, LinkedIn, GitHub, direct email, and copyright
+- [x] Home page renders Eniola Odunaiya's name, Nigeria/Africa practical AI thesis, and short bio with a link to About
+- [x] Home page outputs semantic HTML headings, descriptive `<title>`, meta description, and Open Graph / Twitter Card metadata
+- [x] Automated test harness builds the static site and verifies the rendered HTML output at the built-site seam
+
+## Comments
+
+- Resolved on integration branch `feat/personal-website` (merged from `ticket/01-editorial-shell-home-and-tests`, verified via `pnpm build && pnpm test`).
