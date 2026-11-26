@@ -1,0 +1,63 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SubscriberForm from './SubscriberForm.astro';
+import { siteConfig } from '../config/site';
+import { formatWorkDate, type LibraryWork } from '../lib/library';
+
+interface Props {
+  work: LibraryWork;
+}
+
+const { work } = Astro.props;
+const { Content } = await render(work.entry);
+
+const pageTitle = `${work.title} — ${siteConfig.authorName}`;
+const formattedDate = formatWorkDate(work.publishedAt);
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={work.summary}
+  ogType="article"
+>
+  <article class="work-article">
+    <p class="work-back">
+      <a href="/library">← Back to Library</a>
+    </p>
+
+    <header class="work-article__header">
+      <div class="work-meta">
+        <span class="badge badge--kind">{work.kind}</span>
+        <a
+          class="badge badge--theme badge--link"
+          href={`/library/${work.themeSlug}`}
+        >
+          {work.theme}
+        </a>
+        {
+          formattedDate && (
+            <time
+              class="work-date"
+              datetime={work.publishedAt?.toISOString().slice(0, 10)}
+            >
+              {formattedDate}
+            </time>
+          )
+        }
+      </div>
+      <h1>{work.title}</h1>
+      <p class="lead">{work.summary}</p>
+    </header>
+
+    <hr class="section-rule" />
+
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+
+  <hr class="section-rule" />
+
+  <SubscriberForm idSuffix="work-subscriber" />
+</BaseLayout>
